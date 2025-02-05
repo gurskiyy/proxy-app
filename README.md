@@ -1,69 +1,68 @@
-# proxy-app
+# Proxy App
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This project is a Quarkus-based proxy application. It fetches remote HTML content, rewrites links so that all navigation remains within the proxy, and appends a trademark symbol (™) to every six-letter word in the text content.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Features
 
-## Running the application in dev mode
+- **Dynamic Target Domain:**  
+  The proxy defaults to `https://quarkus.io` but can be configured via the `target` query parameter (e.g., `?target=https://pt.quarkus.io`).
 
-You can run your application in dev mode that enables live coding using:
+- **HTML Modification:**  
+  The application processes HTML responses to:
+  - Append "™" to every six-letter word.
+  - Rewrite both absolute and relative links so that they point back through the proxy by appending a query parameter that preserves the original target domain.
 
-```shell script
+- **Redirect Handling:**  
+  When the target server returns a redirect (HTTP 3xx), the proxy rewrites the `Location` header so that subsequent navigation remains within the proxy.
+
+## Prerequisites
+
+- Java 17 or later
+- Gradle
+- Git
+
+## Getting Started
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/proxy-app.git
+cd proxy-app
+```
+
+### Build the Application
+## Use the Gradle wrapper to build the project:
+```
+./gradlew clean build
+```
+
+### Run the Application in Development Mode
+## Quarkus supports live coding and hot reloading. Start the application in dev mode:
+```
 ./gradlew quarkusDev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+### Running the Application
+## Once the application is running (by default on port 8080), test it using your web browser:
+1. Default Proxy:
+Open a browser and navigate to:
+http://localhost:8080/
+This will proxy requests to https://quarkus.io.
 
-## Packaging and running the application
+2. Dynamic Target Domain:
+To proxy to a different target (e.g., the Portuguese site), navigate to:
+http://localhost:8080/?target=https://pt.quarkus.io
 
-The application can be packaged using:
+3. Link Rewriting:
+The application rewrites links in the returned HTML so that when you click a link, it routes through the proxy with the appropriate target query parameter.
 
-```shell script
-./gradlew build
+
+### Testing
+## The project includes unit and integration tests. To run tests using Gradle, use:
+
+```
+./gradlew test
 ```
 
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+Tests use RestAssured (and optionally MockWebServer) to simulate external responses and validate that both the HTML modification and proxy functionality work as expected.
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/proxy-app-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
-
-## Related Guides
-
-- RESTEasy Classic ([guide](https://quarkus.io/guides/resteasy)): REST endpoint framework implementing Jakarta REST and
-  more
-- RESTEasy Classic's REST Client Jackson ([guide](https://quarkus.io/guides/resteasy-client)): Jackson serialization
-  support for the REST Client
-
-## Provided Code
-
-### RESTEasy JAX-RS
-
-Easily start your RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
